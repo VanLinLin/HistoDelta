@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HistoDelta</title>
+  <meta name="description" content="HistoDelta: Forecasting Serial Histology by Learning Only What Changes. HistoDelta forecasts how the next tissue section changes, in frozen pathology features, from the current section alone.">
+  <meta property="og:title" content="HistoDelta: Forecasting Serial Histology by Learning Only What Changes">
+  <meta property="og:description" content="HistoDelta forecasts how the next tissue section changes, in frozen pathology features, from the current section alone.">
+  <meta property="og:image" content="static/img/teaser.jpg">
+  <link rel="icon" href="static/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;700;800&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="static/css/style.css">
+<link rel="stylesheet" href="static/css/v3.css">
+</head>
+<body>
+
+<header class="hero2">
+ <div class="wide hero-grid">
+ <div class="hero-text">
+  <img class="logo" src="static/img/logo.svg" alt="HistoDelta logo">
+  <h1>Histo<span>Delta</span></h1>
+  <div class="subtitle">Forecasting Serial Histology by Learning Only What Changes</div>
+  <p class="pitch">HistoDelta forecasts how the next tissue section changes, in frozen pathology features, from the current section alone. No image is generated.</p>
+  <div class="authors">
+    <span>Yu-Fan Lin<sup>1</sup></span>
+    <span>Chia-Yen Lee<sup>2</sup></span>
+    <span>Yixiang Wang</span>
+    <span>Chih-Chung Hsu</span>
+    <span>Yi-Chen Yeh<sup>3</sup></span>
+    <span>Lalit K. Mestha<sup>4</sup></span>
+    <span>Xin Li<sup>1</sup></span>
+    <span>Ming-Ching Chang<sup>1</sup></span>
+  </div>
+  <div class="affil">
+    <span><sup>1</sup>University at Albany, SUNY</span>
+    <span><sup>2</sup>National Yang Ming Chiao Tung University</span>
+    <span><sup>3</sup>Taipei Veterans General Hospital</span>
+    <span><sup>4</sup>PathScience Inc.</span>
+  </div>
+  <div class="buttons">
+    <a class="btn" href="#explore">Explore pairs</a>
+    <a class="btn ghost" href="#results">See the numbers</a>
+    <span class="status">PREPRINT</span>
+  </div>
+  <div class="buttons small">
+    <a class="btn soon" href="#">Paper</a>
+    <a class="btn soon" href="#">arXiv</a>
+    <a class="btn soon" href="#">Code (coming soon)</a>
+  </div>
+  <div class="mini-stats">
+    <a href="#results"><b>0.228</b><span>test SS with 1% of skin patients</span></a>
+    <a href="#results"><b>999/1,000</b><span>pairs closer than copy</span></a>
+    <a href="#results"><b>0.355&ndash;0.361</b><span>SS 100&ndash;300&nbsp;&micro;m deeper</span></a>
+    <a href="#results"><b>0.09&nbsp;ms</b><span>per pair, + 1.0 ms CONCH</span></a>
+  </div>
+ </div>
+ <div class="hero-demo" data-explorer="auto">
+  <div class="viewer">
+    <img class="imgZ1" alt="H&amp;E of section z+1 (real)">
+    <div class="clip"><img class="imgZ" alt="H&amp;E of section z (real)"></div>
+    <canvas width="720" height="720"></canvas>
+    <div class="divider"></div>
+    <div class="tag" style="left:8px">section <i>z</i> (input)</div>
+    <div class="tag" style="right:8px">section <i>z</i>+1 (truth)</div>
+    <div class="badge"></div>
+  </div>
+  <div class="demo-bar">
+    <button class="step" data-step="-1" aria-label="Previous pair">&larr;</button>
+    <div class="seg layerSeg"></div>
+    <button class="step" data-step="1" aria-label="Next pair">&rarr;</button>
+  </div>
+  <div class="demo-note">Both sections are real H&amp;E. The heatmap is change in CONCH features (14&times;14 tokens), not a predicted image. Pairs of Figure 8.</div>
+ </div>
+ </div>
+</header>
+
+<div class="marquee" aria-hidden="true"><div class="track">
+  <span>No image generated</span><span>Real H&amp;E only on this page</span><span>14&times;14 CONCH tokens per 248&nbsp;&micro;m patch</span>
+  <span>0.228 test SS with 1% of skin patients</span><span>999 / 1,000 validation pairs closer than copy</span>
+  <span>100&ndash;300&nbsp;&micro;m deeper on six prostate biopsies</span><span>19.8M trained parameters</span>
+  <span>No image generated</span><span>Real H&amp;E only on this page</span><span>14&times;14 CONCH tokens per 248&nbsp;&micro;m patch</span>
+  <span>0.228 test SS with 1% of skin patients</span><span>999 / 1,000 validation pairs closer than copy</span>
+  <span>100&ndash;300&nbsp;&micro;m deeper on six prostate biopsies</span><span>19.8M trained parameters</span>
+</div></div>
+
+<nav class="anchors">
+  <div class="wrap">
+    <a href="#results">Results</a>
+    <a href="#numbers">Numbers</a>
+    <a href="#explore">Explore</a>
+    <a href="#abstract">Abstract</a>
+    <a href="#problem">Problem</a>
+    <a href="#method">Method</a>
+    <a href="#uses">Uses</a>
+    <a href="#faq">Limitations &amp; FAQ</a>
+    <a href="#citation">Citation</a>
+    <button class="themeBtn" aria-label="Toggle dark mode">&#9790;</button>
+  </div>
+</nav>
+
+<section style="padding-top:40px">
+  <div class="wrap">
+    <figure class="teaser">
+      <img src="static/img/teaser.jpg" alt="Task, problem and approach: forecast where an adjacent section changes; generated sections change too much and off direction; HistoDelta adds a learned change to the CONCH features of section z and gives a change map without generating an image.">
+      <figcaption><b>HistoDelta forecasts how the next tissue section changes, in frozen pathology features, from the current section alone.</b>
+        (a) Task: forecast where the tissue will change in a section that is not yet cut.
+        (b) Problem: medical world models generate a section whose changes are too large and off direction.
+        (c) HistoDelta adds a learned change to the CONCH features of section <i>z</i>; its forecasts beat copy even with 1% of the patients and give a change map without generating an image.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="results" class="dark">
+  <div class="wrap">
+    <div class="kicker">Results</div>
+    <h2>Four numbers from the paper.</h2>
+    <p class="lead">Skill score (SS) is the fraction of copy's feature error that a forecast removes; copy reuses the current section's features unchanged, so copy = 0.
+      Skin patches are 256&times;256 pixels at 0.97&nbsp;&micro;m per pixel, encoded as 14&times;14 CONCH tokens.</p>
+    <div class="stats four">
+      <div class="stat"><div class="num ours" data-count="0.228">0.228</div>
+        <div class="lbl">Test SS trained on 1% of the skin patients (4 patients), unscaled; the lowest average error among the forecasters we trained on the same data.</div>
+        <div class="src">Table 2, HistoDelta row, 1% column. COBRA skin BCC test set, 4,000 pairs from 139 slides; mean of four patient draws.</div></div>
+      <div class="stat"><div class="num ours">999 / 1,000</div>
+        <div class="lbl">Validation pairs forecast closer to the true next section than copy. The image generators we tested: at most 1 / 1,000.</div>
+        <div class="src">Table 1(b), "Closer than copy" column. 1,000 validation pairs; generators scored by unscaled single samples.</div></div>
+      <div class="stat"><div class="num ours">0.355&ndash;0.361</div>
+        <div class="lbl">Mean SS at 100, 200 and 300&nbsp;&micro;m deeper, above copy on all six held-out prostate biopsies.</div>
+        <div class="src">Supp. Table S8, "SS of HistoDelta" rows, Mean column. Six-fold leave-one-biopsy-out on PCa_Bx_3Dpathology light-sheet volumes.</div></div>
+      <div class="stat"><div class="num ours"><span data-count="0.09">0.09</span> ms</div>
+        <div class="lbl">Per pair, batched (256 pairs), 19.8M trained parameters; plus 1.0 ms per section for CONCH encoding. The image generators we tested: 139&ndash;270 ms per pair.</div>
+        <div class="src">Supp. Table S9. Idle A100, bfloat16, median after warm-up; generators batched 64, 50 DDIM steps plus VAE decoder.</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="numbers" class="soft">
+  <div class="wrap">
+    <div class="kicker">Numbers</div>
+    <h2>Only feature-space forecasts land on the right side of copy.</h2>
+    <p class="lead">Excerpts of the paper's tables. Copy reuses the current section and scores 0; a bar to the right beats it.</p>
+    <div class="ncard">
+      <h3>Skill vs copy on 1,000 validation pairs, all training patients</h3>
+      <div class="dchart" data-diverge></div>
+      <p class="src">Table 2, "Val (100%)" column. The direct transformer is highest with all patients; HistoDelta leads with 1&ndash;2% of them (Method section).</p>
+    </div>
+    <div class="ncard">
+      <h3>Milliseconds per pair, batched (log scale)</h3>
+      <div class="dchart" data-time></div>
+      <p class="src">Supp. Table S9, "Batched" column. Idle A100; generators batched 64 with 50 DDIM steps and the VAE decoder, feature-space models batched 256. Feature-space models also encode each section with CONCH, 1.0&nbsp;ms.</p>
+    </div>
+    <div class="ncard">
+      <h3>Table 2 of the paper</h3>
+      <div class="tscroll"><table class="ptable">
+        <thead><tr><th>Type</th><th>Method</th><th>1%</th><th>2%</th><th>Val (100%)</th><th>Test (100%)</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="2">Reference</td><td>Copy</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+          <tr><td>Null (input-agnostic)</td><td>&ndash;</td><td>&ndash;</td><td>&minus;2.49</td><td>&minus;2.44</td></tr>
+          <tr class="grp"><td rowspan="4">Pixel generation</td><td>SD1.5-ControlNet</td><td>&ndash;</td><td>&ndash;</td><td class="neg">&minus;1.22</td><td>&ndash;</td></tr>
+          <tr><td>CEKWorld 2D</td><td>&ndash;</td><td>&ndash;</td><td class="neg">&minus;2.63</td><td>&ndash;</td></tr>
+          <tr><td>CEKWorld 3D</td><td>&ndash;</td><td>&ndash;</td><td class="neg">&minus;2.46</td><td>&ndash;</td></tr>
+          <tr><td>&nbsp;&nbsp;fine-tuned on skin</td><td>&ndash;</td><td>&ndash;</td><td class="neg">&minus;0.95</td><td class="neg">&minus;0.92</td></tr>
+          <tr class="grp"><td rowspan="4">Feature space</td><td>Ridge (3&times;3 tokens)</td><td>0.192</td><td>0.202</td><td>0.219</td><td>0.216</td></tr>
+          <tr><td>DINO-Foresight (CONCH port)</td><td>0.224<sup>&dagger;</sup></td><td>0.238<sup>&dagger;</sup></td><td>0.304</td><td>0.299</td></tr>
+          <tr><td>Direct transformer</td><td>0.221<sup>&dagger;</sup></td><td>0.234<sup>&dagger;</sup></td><td class="best">0.326</td><td class="best">0.319</td></tr>
+          <tr><td>&nbsp;&nbsp;+ 3D pretraining</td><td>0.219<sup>&dagger;</sup></td><td>0.232<sup>&dagger;</sup></td><td>&ndash;</td><td>&ndash;</td></tr>
+          <tr class="grp ours"><td rowspan="2">Ours</td><td><b>HistoDelta</b></td><td class="best">0.228</td><td class="best">0.243</td><td>0.310</td><td>0.305</td></tr>
+          <tr class="ours"><td>&nbsp;&nbsp;w/o 3D pretraining</td><td>0.140<sup>&dagger;</sup></td><td>0.170<sup>&dagger;</sup></td><td>0.310</td><td>0.304</td></tr>
+        </tbody></table></div>
+      <p class="src">Skill score (SS) vs copy, higher is better; bold green = best in the column. 1,000 validation pairs (Val) and 4,000 test pairs (1%, 2%, Test), each forecast from the unwarped section.
+        &dagger; Validation-rescaled: <b>t</b><sub><i>z</i></sub> + &alpha;(<b>t&#770;</b><sub><i>z</i>+1</sub> &minus; <b>t</b><sub><i>z</i></sub>), &alpha; fitted in closed form on validation pairs (0.55&ndash;0.85).</p>
+    </div>
+  </div>
+</section>
+
+<section id="explore" class="soft">
+  <div class="wrap">
+    <div class="kicker">Explore</div>
+    <h2>Where does the next section change?</h2>
+    <p class="lead">Drag the divider between two real, registered H&amp;E sections. Overlay the true change in CONCH features, HistoDelta's forecast change, or a generator's change. Click a token to compare errors.</p>
+    <div class="explorer" data-explorer="full">
+      <div>
+        <div class="viewer">
+          <img class="imgZ1" alt="H&amp;E of section z+1 (real)">
+          <div class="clip"><img class="imgZ" alt="H&amp;E of section z (real)"></div>
+          <canvas width="720" height="720"></canvas>
+          <div class="divider"></div>
+          <div class="tag" style="left:8px">section <i>z</i> (input)</div>
+          <div class="tag" style="right:8px">section <i>z</i>+1 (truth)</div>
+        </div>
+        <p class="explain">Heatmaps show change in CONCH feature space (14&times;14 tokens per 248&nbsp;&micro;m patch), not predicted images. Both H&amp;E panels are real sections.
+          "Selected pairs" are the four pairs of Figure 8 of the paper; "Random pairs" are drawn at random (below). Each map uses its own color range.</p>
+      </div>
+      <div class="panel">
+        <label for="pairSel">Pair</label>
+        <select class="pairSel"></select>
+        <label>Overlay</label>
+        <div class="seg layerSeg"></div>
+        <label>Overlay opacity</label>
+        <input type="range" class="alpha" min="0" max="100" value="65">
+        <div class="legend"><div class="cbar"></div><span>low</span><span style="float:right">high</span></div>
+        <div class="readout"></div>
+        <div class="legend">Outlines: the 20 tokens with the largest change. On a forecast, solid white = hit (within one token of a true top-20 token), dashed red = miss.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="random" style="padding-top:0" class="soft">
+  <div class="wrap">
+    <h3 style="text-align:center;font-size:24px;margin:0">Eight random pairs, not picked by hand</h3>
+    <div class="gallery" data-gallery></div>
+    <p class="explain" style="text-align:center">Drawn once with a rule fixed beforehand: validation pairs forecasting the warped section from the fixed one, at most one pair per slide, slides of Figure 8 excluded, random seed 20261123.
+      Per-pair scores are computed for this page and are not in the paper's tables (*). Click a card to open it in the explorer.</p>
+  </div>
+</section>
+
+<section id="abstract">
+  <div class="narrow">
+    <h2>Abstract</h2>
+    <p>Pathologists cut serial sections for extra stains and deeper levels, yet each costly section stays unknown until it is cut and stained.
+    A world model that forecasts, from the current section, how the next one changes could preview it before cutting.
+    However, registered serial sections are scarce, which limits the training of such a model.
+    Directly training an image generator on these few pairs raises two problems: (a) Adjacent sections share most of their structure, so a forecast that predicts no change still scores high on image similarity.
+    (b) Designed for realism, the generators we test predict changes that are too large and off the true direction.
+    Their unscaled single samples thus lie farther from the true section in feature space than the current section does.
+    To address these problems, we propose HistoDelta, a world model that forecasts the change between sections in frozen pathology features.
+    To make up for the scarce pairs, HistoDelta is first pretrained on 3D prostate volumes and then fine-tuned on the target dataset.
+    For (a), we score each forecast by how much of the error of reusing the current section it removes.
+    For (b), HistoDelta keeps the tokens of the current section and adds a learned change to each, initialized at zero.
+    Trained on only 1% of the skin patients, HistoDelta has the lowest average error among the forecasters we trained on the same data.
+    On held-out prostate biopsy volumes, it also beats reusing the current section at deeper intervals of 100&ndash;300&nbsp;&micro;m.
+    Our code will be made publicly available.</p>
+  </div>
+</section>
+
+<section id="problem" class="soft">
+  <div class="wrap">
+    <div class="kicker peer">Problem</div>
+    <h2>Realistic sections, wrong change.</h2>
+        <p class="lead">Every forecast is an arrow shot from copy toward the true next section. Arrows that land inside the dashed arc are closer to the truth than copy.</p>
+    <figure class="archery" data-archery>
+      <div class="seg methodSeg"></div>
+      <div style="text-align:center;margin-top:6px"><button class="replay">&#8635; Replay</button></div>
+      <canvas></canvas>
+      <noscript><img src="static/img/archery.jpg" alt="Per-pair progress toward the next section against error off its direction"></noscript>
+      <figcaption><b>The generators change the section too much, and mostly off the direction of the true change.</b>
+        Points inside the dashed arc beat copy, with one point per validation pair, copy at (0,0), the target at (1,0) and unequal axis scales (ft, fine-tuned on skin).
+        Same data as Figure 2 of the paper; click a method to hide or show it.</figcaption>
+    </figure>
+    <figure style="max-width:720px;margin:48px auto 0">
+      <img src="static/img/gen_samples.jpg" alt="Generator skill score against the number of averaged samples">
+      <figcaption><b>Averaging more samples raises the generators' skill, but they stay below copy unless rescaled.</b></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="method">
+  <div class="wrap">
+    <div class="kicker">Method</div>
+    <h2>Keep the current tokens, learn only the change.</h2>
+    <figure>
+      <img src="static/img/method.jpg" alt="HistoDelta method: training, inference, zero-initialized residual and 3D tissue pretraining">
+      <figcaption><b>HistoDelta forecasts CONCH tokens with a copy-anchored residual.</b>
+        (a) Training and (b) inference: <i>g</i><sub>&theta;</sub> adds a predicted change to the copy <b>t</b><sub><i>z</i></sub>, and no image is generated;
+        (c) the zero-initialized residual starts training from exact copy, keeping the forecast change small, and
+        (d) 3D tissue pretraining at known &Delta;<i>z</i> mainly transfers a tissue representation and initializes the skin predictor.</figcaption>
+    </figure>
+    <div class="fig-pair" style="margin-top:40px">
+      <figure class="ldbox" data-lowdata>
+        <canvas></canvas>
+        <input type="range" min="0" max="4" step="1" value="0" aria-label="Fraction of training patients">
+        <div class="ldout"></div>
+        <noscript><img src="static/img/lowdata.jpg" alt="Test skill score against the fraction of training patients"></noscript>
+        <figcaption><b>HistoDelta leads with only 1&ndash;2% of the training patients.</b>
+          Test SS on COBRA against the training fraction (4 to 73 patients), mean &plusmn; standard deviation over four patient draws, with only the direct transformer validation-rescaled. Drag the slider; values from Supp. Table S5 (same study as Figure 5).</figcaption>
+      </figure>
+      <figure>
+        <img src="static/img/prostate.jpg" alt="Skill score at 100, 200 and 300 micrometres on held-out prostate biopsies">
+        <figcaption><b>On held-out prostate biopsies, HistoDelta stays well above copy and, on average, above ridge regression from 100 to 300&nbsp;&micro;m.</b>
+          Lines are means over six biopsies (points).</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="uses" class="soft">
+  <div class="wrap">
+    <div class="kicker">What it can be used for</div>
+    <h2>Feature-level forecasts, three uses.</h2>
+    <div class="cards">
+      <div class="card"><a class="demo" data-demo="change" href="#explore"><img alt="Real H&amp;E of section z, Figure 8 pair"><canvas width="280" height="280"></canvas><span class="ghint">HistoDelta change, CONCH tokens</span></a><h3>Change map</h3>
+        <p>See which regions of the current section are forecast to change most in the adjacent section.</p>
+        <p class="caveat">Not yet validated by pathologists; see the FAQ.</p></div>
+      <div class="card"><div class="demo nums"><div class="tnum"><span>Tumor disappears, AUROC</span><b class="gen">87.03</b><i>copy</i><b class="ours" data-count="88.62">88.62</b><i>HistoDelta</i></div>
+          <div class="tnum"><span>Tumor appears, AUROC</span><b class="gen">96.32</b><i>copy</i><b class="ours" data-count="96.86">96.86</b><i>HistoDelta</i></div>
+          <div class="tsrc">Supp. Table S10, &times;100, test split</div></div><h3>Where tumor appears or disappears</h3>
+        <p>A linear probe on the forecast tokens flags where tumor appears or disappears in the next section better than copy and ridge regression, and on par with Gaussian-smoothed copy for appearing tumor.</p>
+        <p class="caveat">Automatic labels from an H&#8209;optimus&#8209;1 probe, not pathologist outlines (Supp. Sec. K).</p></div>
+      <div class="card"><div class="demo chart" data-demo="deeper"><canvas></canvas><div class="tsrc">Supp. Table S8, mean of six held-out biopsies</div></div><h3>Deeper intervals in 3D volumes</h3>
+        <p>Forecast across 100&ndash;300&nbsp;&micro;m in prostate light-sheet volumes, above copy on all six held-out biopsies.</p>
+        <p class="caveat">Prostate light-sheet volumes rendered as pseudo-H&amp;E, not clinical skin sections.</p></div>
+    </div>
+    <figure style="margin-top:40px">
+      <img src="static/img/qualitative.jpg" alt="Per-token change maps for the truth, HistoDelta, SD1.5-ControlNet and fine-tuned CEKWorld 3D on four validation pairs">
+      <figcaption><b>HistoDelta places its change on the tokens that change in the adjacent section, while both generators spread change over the whole tile.</b>
+        Each row is a validation pair: H&amp;E of sections <i>z</i> and <i>z</i>+1, per-token change for the truth, HistoDelta, SD1.5-ControlNet and the fine-tuned CEKWorld 3D, and per-token error with the per-pair skill score.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="narrow">
+    <h2>Limitations &amp; FAQ</h2>
+    <details open><summary>Does HistoDelta generate the next section?</summary>
+      <p>No. It forecasts CONCH feature tokens (14&times;14 per 248&nbsp;&micro;m patch), not images, and only for single patches, not whole slides. Rendering forecasts as images and extending them to whole slides are future work.</p></details>
+    <details><summary>What are the skin pairs?</summary>
+      <p>Registered serial H&amp;E sections of skin basal-cell carcinoma from COBRA. The archive does not record the spacing between sections, and most serial groups hold only two sections (1,936 of 1,967). Each pair is scored once, forecasting the warped section from the fixed one.</p></details>
+    <details><summary>Where does HistoDelta not win?</summary>
+      <ul>
+        <li>With all training patients, the direct transformer scores higher (0.319 vs 0.305; Table 2, Test column).</li>
+        <li>From 5% of the training patients, the rescaled direct transformer overtakes HistoDelta (Figure 5; Supp. Table S5).</li>
+        <li>On UNI2-h features, ridge regression and DINO-Foresight lead (Supp. Table S7: 0.322 and 0.297 vs 0.289).</li>
+        <li>At 200 and 300&nbsp;&micro;m, ridge regression localizes changes within a pair better (Supp. Table S8).</li>
+      </ul></details>
+    <details><summary>How were tumor labels obtained?</summary>
+      <p>Automatically, from a linear probe on H&#8209;optimus&#8209;1 features; the serial sections carry no tumor outlines. A pathologist blind to the labels agreed with them in 34 of 40 pairs.</p></details>
+    <details><summary>Did pathologists confirm the change maps?</summary>
+      <p>Not yet. In one reading, the pathologist rated every outlined region of both maps as only partly changed. In a second, blinded reading by the same pathologist on 48 pairs, the outlines of HistoDelta and a fine-tuned generator were about the same in 40 pairs, and HistoDelta was chosen in the other 8. The reader said this localization task could not be judged by eye, so we do not treat it as evidence. A slide-level reader study is future work.</p></details>
+    <details><summary>What data has it been tested on?</summary>
+      <p>Formalin-fixed paraffin-embedded skin sections (COBRA) and six prostate biopsy volumes. Frozen sections and other 3D datasets with recorded spacing are untested.</p></details>
+    <details><summary>Is feature-space accuracy clinically useful?</summary>
+      <p>Not shown. The paper scores how much of copy's feature error a forecast removes; clinical utility has not been tested.</p></details>
+  </div>
+</section>
+
+<section id="citation" class="soft">
+  <div class="narrow">
+    <h2 style="text-align:left">Citation</h2>
+    <button class="copy-btn" type="button" onclick="navigator.clipboard.writeText(document.getElementById('bib').innerText);this.textContent='Copied'">Copy</button>
+<pre id="bib">@article{lin2026histodelta,
+  title   = {HistoDelta: Forecasting Serial Histology by Learning Only What Changes},
+  author  = {Lin, Yu-Fan and Lee, Chia-Yen and Wang, Yixiang and Hsu, Chih-Chung and Yeh, Yi-Chen and Mestha, Lalit K. and Li, Xin and Chang, Ming-Ching},
+  journal = {arXiv preprint},
+  year    = {2026}
+}</pre>
+  </div>
+</section>
+
+<footer class="narrow">
+  Skin data: <a href="https://registry.opendata.aws/cobra/">COBRA</a> (Radboud University Medical Center), CC BY-NC-SA 4.0, used for non-commercial research only.
+  The H&amp;E images and heatmaps on this page are derived from COBRA and are shared under CC BY-NC-SA 4.0.<br>
+  Prostate data: W. Xie, N. P. Reder, C. F. Koyuncu, et al., &ldquo;3D Pathology of Prostate Biopsies with Biochemical Recurrence Outcomes: Raw H&amp;E-Analog Datasets and Image Translation-Assisted Segmentation in 3D (ITAS3D) Datasets (PCa_Bx_3Dpathology),&rdquo; The Cancer Imaging Archive, Version 1, 2023, <a href="https://doi.org/10.7937/44MA-GX21">doi:10.7937/44MA-GX21</a>, CC BY 4.0.<br>
+  Page layout inspired by <a href="https://nerfies.github.io/">Nerfies</a>.
+</footer>
+
+<script src="static/explorer.js"></script>
+<script src="static/archery.js"></script>
+<script src="static/gallery.js"></script>
+<script src="static/numbers.js"></script>
+</body>
+</html>

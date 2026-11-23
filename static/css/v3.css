@@ -1,0 +1,61 @@
+/* ---- v3: numbers, low-data slider, card demos, dark theme (2026-11-23) ---- */
+.ncard { background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:20px 22px; margin-top:22px; }
+.ncard h3 { margin:0 0 12px; font-size:18px; }
+.ncard .src, .tsrc { font-size:12.5px; color:var(--muted); margin:10px 0 0; }
+.dchart { --dname:230px; }
+.drow { display:flex; align-items:center; height:28px; font-size:13.5px; }
+.dname { flex:0 0 var(--dname); padding-right:12px; text-align:right; color:var(--text); }
+.drow.ours .dname { font-weight:700; color:var(--blue); }
+.dtrack { position:relative; flex:1; height:18px; }
+.dzero { position:absolute; top:-6px; bottom:-6px; border-left:2px dashed var(--text); }
+.dbar { position:absolute; top:2px; height:14px; border-radius:3px; transition:width .9s cubic-bezier(.2,.8,.2,1), margin-left .9s cubic-bezier(.2,.8,.2,1); }
+.dval { position:absolute; top:-1px; font-size:12px; font-variant-numeric:tabular-nums; color:var(--muted); white-space:nowrap; }
+.drow.ours .dval { color:var(--blue); font-weight:700; }
+.daxis { position:relative; height:22px; margin:4px 0 0 var(--dname); padding-left:0 !important; font-size:11.5px; color:var(--muted); }
+.daxis span { position:absolute; transform:translateX(-50%); white-space:nowrap; }
+.daxis span[style^="left:0"], .daxis span[style^="right:0"] { transform:none; }
+.tscroll { overflow-x:auto; }
+.ptable { width:100%; border-collapse:collapse; font-size:13.5px; font-variant-numeric:tabular-nums; }
+.ptable th, .ptable td { padding:6px 10px; border-bottom:1px solid var(--line); text-align:center; white-space:nowrap; }
+.ptable th:nth-child(-n+2), .ptable tr:not(.x) td:first-child { text-align:left; }
+.ptable td:nth-child(2) { text-align:left; }
+.ptable tr.grp td { border-top:2px solid var(--line); }
+.ptable tr.ours td { background:rgba(36,87,197,.08); }
+.ptable td.best { color:#1F7A3D; font-weight:800; }
+.ptable td.neg { color:var(--peer); }
+.ldbox { background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:14px; }
+.ldbox canvas { width:100%; display:block; }
+.ldbox input { width:100%; margin:6px 0 4px; accent-color:var(--blue); }
+.ldhead { font-weight:700; font-size:14px; margin-bottom:4px; }
+.ldhead.ours { color:var(--blue); }
+.ldrow { display:flex; align-items:center; font-size:13px; gap:6px; }
+.ldrow .dot { display:inline-block; width:9px; height:9px; border-radius:50%; }
+.ldrow b { margin-left:auto; font-variant-numeric:tabular-nums; }
+.ldnote { font-size:12.5px; color:var(--muted); margin-top:4px; }
+.demo { display:block; position:relative; margin:-4px -4px 14px; border-radius:10px; overflow:hidden; background:var(--soft); }
+a.demo { aspect-ratio:1/1; }
+a.demo img, a.demo canvas { position:absolute; inset:0; width:100%; height:100%; }
+.demo.nums { padding:14px; }
+.tnum { display:grid; grid-template-columns:auto 1fr auto 1fr; column-gap:8px; align-items:baseline; margin-bottom:10px; }
+.tnum span { grid-column:1/5; font-size:12.5px; color:var(--muted); }
+.tnum b { font-family:Figtree,sans-serif; font-size:26px; font-variant-numeric:tabular-nums; }
+.tnum b.gen { color:var(--peer); font-size:20px; }
+.tnum b.ours { color:var(--blue); }
+.tnum i { font-style:normal; font-size:12px; color:var(--muted); }
+.demo.chart { padding:10px; }
+.demo.chart canvas { width:100%; display:block; }
+.themeBtn { border:1px solid var(--line); background:var(--paper); color:var(--text); border-radius:999px; width:30px; height:30px; cursor:pointer; margin-left:8px; }
+:root[data-theme="dark"] {
+  --ink:#0B0D12; --text:#E6E8EE; --muted:#9AA1B0; --line:#2A2F3A; --paper:#151922; --soft:#0F1218; --blue:#7FA6FF; --blue-dark:#A9C2FF; --peer:#E0915F;
+}
+:root[data-theme="dark"] body { background:var(--paper); }
+:root[data-theme="dark"] .hero2 { background:radial-gradient(1200px 500px at 80% 0%, #2A1D2A 0%, rgba(0,0,0,0) 60%), var(--paper); }
+:root[data-theme="dark"] figure > img, :root[data-theme="dark"] .fig-pair img { background:#fff; border-radius:8px; }
+:root[data-theme="dark"] .ptable td.best { color:#5BD18A; }
+:root[data-theme="dark"] nav.anchors { background:rgba(21,25,34,.92); }
+:root[data-theme="dark"] .hero-text .subtitle, :root[data-theme="dark"] .pitch, :root[data-theme="dark"] .marquee .track { color:var(--text); }
+:root[data-theme="dark"] .btn.ghost { color:var(--text); border-color:var(--text); }
+@media (max-width: 640px) { .dchart { --dname:118px; } .drow { font-size:12px; } }
+:root[data-theme="dark"] .lead, :root[data-theme="dark"] figcaption, :root[data-theme="dark"] .explain { color:#C9CEDA; }
+:root[data-theme="dark"] .kicker { color:var(--blue); }
+.methodSeg button.dim { filter:grayscale(1); opacity:.4; transition:opacity .2s; }

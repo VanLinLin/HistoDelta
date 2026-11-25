@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>HistoDelta</title>
-  <meta name="description" content="HistoDelta: Forecasting Serial Histology by Learning Only What Changes. HistoDelta forecasts how the next tissue section changes, in frozen pathology features, from the current section alone.">
+  <meta name="description" content="HistoDelta: Forecasting Serial Histology by Learning Only What Changes. HistoDelta forecasts how the local pathology features of the next section change, from the current section alone.">
   <meta property="og:title" content="HistoDelta: Forecasting Serial Histology by Learning Only What Changes">
-  <meta property="og:description" content="HistoDelta forecasts how the next tissue section changes, in frozen pathology features, from the current section alone.">
+  <meta property="og:description" content="HistoDelta forecasts how the local pathology features of the next section change, from the current section alone.">
   <meta property="og:image" content="static/img/teaser.jpg">
   <link rel="icon" href="static/img/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,7 +23,7 @@
   <img class="logo" src="static/img/logo.svg" alt="HistoDelta logo">
   <h1>Histo<span>Delta</span></h1>
   <div class="subtitle">Forecasting Serial Histology by Learning Only What Changes</div>
-  <p class="pitch">HistoDelta forecasts how the next tissue section changes, in frozen pathology features, from the current section alone. No image is generated.</p>
+  <p class="pitch">HistoDelta forecasts how the local pathology features of the next section change, from the current section alone. No image is generated.</p>
   <div class="authors">
     <span>Yu-Fan Lin<sup>1</sup></span>
     <span>Chia-Yen Lee<sup>2</sup></span>
@@ -105,7 +105,7 @@
   <div class="wrap">
     <figure class="teaser">
       <img src="static/img/teaser.jpg" alt="Task, problem and approach: forecast where an adjacent section changes; generated sections change too much and off direction; HistoDelta adds a learned change to the CONCH features of section z and gives a change map without generating an image.">
-      <figcaption><b>HistoDelta forecasts how the next tissue section changes, in frozen pathology features, from the current section alone.</b>
+      <figcaption><b>HistoDelta forecasts how the local pathology features of the next section change, from the current section alone.</b>
         (a) Task: forecast where the tissue will change in a section that is not yet cut.
         (b) Problem: medical world models generate a section whose changes are too large and off direction.
         (c) HistoDelta adds a learned change to the CONCH features of section <i>z</i>; its forecasts beat copy even with 1% of the patients and give a change map without generating an image.</figcaption>
@@ -178,7 +178,7 @@
 <section id="explore" class="soft">
   <div class="wrap">
     <div class="kicker">Explore</div>
-    <h2>Where does the next section change?</h2>
+    <h2>How do local features change in the next section?</h2>
     <p class="lead">Drag the divider between two real, registered H&amp;E sections. Overlay the true change in CONCH features, HistoDelta's forecast change, or a generator's change. Click a token to compare errors.</p>
     <div class="explorer" data-explorer="full">
       <div>
@@ -202,7 +202,11 @@
         <input type="range" class="alpha" min="0" max="100" value="65">
         <div class="legend"><div class="cbar"></div><span>low</span><span style="float:right">high</span></div>
         <div class="readout"></div>
-        <div class="legend">Outlines: the 20 tokens with the largest change. On a forecast, solid white = hit (within one token of a true top-20 token), dashed red = miss.</div>
+        <div class="legend okey">Outlines mark the 20 tokens with the largest change:
+          <div><i class="sw ring" style="border:2px solid #fff"></i><b>True change overlay</b>: the true top-20 tokens</div>
+          <div><i class="sw ring" style="border:2px solid #fff"></i><b>hit</b> (forecast overlays): within one token of a true top-20 token</div>
+          <div><i class="sw" style="border:2px dashed #e03131"></i><b>miss</b>: (forecast overlays): far from every true top-20 token</div>
+          <div><i class="sw" style="border:3px solid #2457C5;background:#fff"></i>token you clicked</div></div>
       </div>
     </div>
   </div>
@@ -292,12 +296,12 @@
     <h2>Feature-level forecasts, three uses.</h2>
     <div class="cards">
       <div class="card"><a class="demo" data-demo="change" href="#explore"><img alt="Real H&amp;E of section z, Figure 8 pair"><canvas width="280" height="280"></canvas><span class="ghint">HistoDelta change, CONCH tokens</span></a><h3>Change map</h3>
-        <p>See which regions of the current section are forecast to change most in the adjacent section.</p>
+        <p>See where the local pathology features are forecast to change most in the adjacent section.</p>
         <p class="caveat">Not yet validated by pathologists; see the FAQ.</p></div>
-      <div class="card"><div class="demo nums"><div class="tnum"><span>Tumor disappears, AUROC</span><b class="gen">87.03</b><i>copy</i><b class="ours" data-count="88.62">88.62</b><i>HistoDelta</i></div>
-          <div class="tnum"><span>Tumor appears, AUROC</span><b class="gen">96.32</b><i>copy</i><b class="ours" data-count="96.86">96.86</b><i>HistoDelta</i></div>
-          <div class="tsrc">Supp. Table S10, &times;100, test split</div></div><h3>Where tumor appears or disappears</h3>
-        <p>A linear probe on the forecast tokens flags where tumor appears or disappears in the next section better than copy and ridge regression, and on par with Gaussian-smoothed copy for appearing tumor.</p>
+      <div class="card"><div class="demo nums"><div class="tnum3"><span>Tumor disappears, AUROC</span><div><b class="gen">87.03</b><i>copy</i></div><div><b class="gen">87.62</b><i>smoothed copy</i></div><div><b class="ours">88.62</b><i>HistoDelta</i></div></div>
+          <div class="tnum3"><span>Tumor appears, AUROC</span><div><b class="gen">96.32</b><i>copy</i></div><div><b class="gen">96.84</b><i>smoothed copy</i></div><div><b class="ours">96.86</b><i>HistoDelta</i></div></div>
+          <div class="tsrc">Supp. Table S10, &times;100, test split, automatic labels</div></div><h3>Tumor signal in the forecast</h3>
+        <p>Read by a linear probe, the forecast features separate where tumor disappears better than copy and smoothed copy, and are on par with smoothed copy where tumor appears.</p>
         <p class="caveat">Automatic labels from an H&#8209;optimus&#8209;1 probe, not pathologist outlines (Supp. Sec. K).</p></div>
       <div class="card"><div class="demo chart" data-demo="deeper"><canvas></canvas><div class="tsrc">Supp. Table S8, mean of six held-out biopsies</div></div><h3>Deeper intervals in 3D volumes</h3>
         <p>Forecast across 100&ndash;300&nbsp;&micro;m in prostate light-sheet volumes, above copy on all six held-out biopsies.</p>

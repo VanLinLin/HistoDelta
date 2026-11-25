@@ -37,7 +37,7 @@
         const tt = topk(pair.true_change); ctx.lineWidth = Math.max(2, W / 220);
         topk(v).forEach((i) => {
           const hit = layer === 'true' || near(i, tt);
-          ctx.setLineDash(hit ? [] : [5, 4]); ctx.strokeStyle = layer === 'true' ? '#000' : hit ? '#fff' : '#e03131';
+          ctx.setLineDash(hit ? [] : [5, 4]); ctx.strokeStyle = hit ? '#fff' : '#e03131';
           ctx.strokeRect((i % N) * s + 2, Math.floor(i / N) * s + 2, s - 4, s - 4);
         });
         ctx.setLineDash([]);

@@ -28,7 +28,7 @@
     <span>Yu-Fan Lin<sup>1</sup></span>
     <span>Chia-Yen Lee<sup>2</sup></span>
     <span>Yixiang Wang</span>
-    <span>Chih-Chung Hsu</span>
+    <span>Chih-Chung Hsu<sup>2</sup></span>
     <span>Yi-Chen Yeh<sup>3</sup></span>
     <span>Lalit K. Mestha<sup>4</sup></span>
     <span>Xin Li<sup>1</sup></span>
@@ -46,9 +46,9 @@
     <span class="status">PREPRINT</span>
   </div>
   <div class="buttons small">
-    <a class="btn soon" href="#">Paper</a>
-    <a class="btn soon" href="#">arXiv</a>
-    <a class="btn soon" href="#">Code (coming soon)</a>
+    <span class="btn soon" aria-disabled="true">Paper (coming soon)</span>
+    <span class="btn soon" aria-disabled="true">arXiv (coming soon)</span>
+    <span class="btn soon" aria-disabled="true">Code (coming soon)</span>
   </div>
   <div class="mini-stats">
     <a href="#results"><b>0.228</b><span>test SS with 1% of skin patients</span></a>
@@ -106,7 +106,7 @@
     <figure class="teaser">
       <img src="static/img/teaser.jpg" alt="Task, problem and approach: forecast where an adjacent section changes; generated sections change too much and off direction; HistoDelta adds a learned change to the CONCH features of section z and gives a change map without generating an image.">
       <figcaption><b>HistoDelta forecasts how the local pathology features of the next section change, from the current section alone.</b>
-        (a) Task: forecast where the tissue will change in a section that is not yet cut.
+        (a) Task: forecast how the local pathology features of a section that is not yet cut will change.
         (b) Problem: medical world models generate a section whose changes are too large and off direction.
         (c) HistoDelta adds a learned change to the CONCH features of section <i>z</i>; its forecasts beat copy even with 1% of the patients and give a change map without generating an image.</figcaption>
     </figure>
